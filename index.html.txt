@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axiom Flow | Premium B2B Travel Solutions</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Lucide Icons (via CDN) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+        }
+
+        /* Enable smooth scroll for native anchor links */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030712;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* Grainy Gradient Background */
+        .grainy-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: 
+                radial-gradient(circle at 20% 30%, #1e1b4b 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, #1e3a8a 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, #030712 0%, #030712 100%);
+        }
+
+        .grainy-bg::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Glassmorphism Classes */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+        }
+
+        .glass-hover:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transform: translateY(-4px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Bento Grid Specifics */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: minmax(180px, auto);
+            gap: 1.5rem;
+        }
+
+        /* Animation: Fade-in Up */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Micro-interactions */
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: scale(1.02);
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 600px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .hero-text {
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+
+        /* Image Mask for Dark Theme */
+        .img-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, #030712 10%, rgba(3, 7, 18, 0.2) 50%, rgba(3, 7, 18, 0.8) 100%);
+            z-index: 1;
+        }
+
+        /* Pricing Card Highlight */
+        .pricing-active {
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.15);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="grainy-bg"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 px-6 py-4">
+        <div id="main-nav" class="max-w-7xl mx-auto flex justify-between items-center glass px-8 py-4">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold italic">A</div>
+                <span class="text-xl font-extrabold tracking-tighter uppercase">Axiom Flow</span>
+            </div>
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-400">
+                <a href="#solutions" class="nav-link hover:text-white transition-colors">Solutions</a>
+                <a href="#integrations" class="nav-link hover:text-white transition-colors">Integrations</a>
+                <a href="#pricing" class="nav-link hover:text-white transition-colors">Pricing</a>
+            </div>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdPQnWOBMU0gAfZk2a2IhTi4msSNKqtZEcHhgOPBuYrVJlEnw/viewform?usp=publish-editor" target="_blank" class="glass px-6 py-2 text-sm font-semibold hover:bg-white hover:text-black transition-all rounded-full">
+                Get Started
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <div id="canvas-container"></div>
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <h1 class="hero-text text-6xl md:text-8xl font-extrabold tracking-tight mb-6 leading-tight">
+                Flow into <br><span class="text-blue-500">The Future</span> of Travel.
+            </h1>
+            <p class="max-w-2xl mx-auto text-slate-400 text-lg md:text-xl mb-10 reveal">
+                Axiom Flowは、英国を拠点とする次世代のB2B旅行プラットフォーム。
+                複雑な予約工程を、流れるような美しさへ変えましょう。
+            </p>
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6 reveal">
+                <!-- Google Form Link for Demo -->
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdPQnWOBMU0gAfZk2a2IhTi4msSNKqtZEcHhgOPBuYrVJlEnw/viewform?usp=publish-editor" target="_blank" class="btn-glow bg-blue-600 text-white px-8 py-4 rounded-full font-bold text-lg text-center">
+                    無料デモを予約する
+                </a>
+                <a href="#solutions" class="glass px-8 py-4 rounded-full font-bold text-lg hover:bg-slate-800 transition-all text-center">
+                    機能を見る
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bento Grid Section (Solutions) -->
+    <section id="solutions" class="py-24 container mx-auto px-6 scroll-mt-24">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold mb-4 reveal uppercase tracking-tight">Smart Infrastructure</h2>
+            <p class="text-slate-400 reveal">ビジネスのスケールに合わせた、インテリジェントなカードレイアウト。</p>
+        </div>
+
+        <div class="bento-grid">
+            <!-- Large Card (Premium Global Network) -->
+            <div class="glass glass-hover col-span-4 md:col-span-2 row-span-2 overflow-hidden relative group p-8 flex flex-col justify-end min-h-[400px] reveal bg-slate-900">
+                <img src="https://images.unsplash.com/photo-1530521954074-e64f6810b32d?auto=format&fit=crop&q=80&w=1200" alt="Global Network" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-1000">
+                <div class="img-overlay"></div>
+                <div class="relative z-10">
+                    <span class="bg-blue-600 text-[10px] font-bold px-2 py-1 rounded mb-4 inline-block tracking-widest uppercase">Premium API</span>
+                    <h3 class="text-3xl font-bold mb-2">Global Connectivity</h3>
+                    <p class="text-slate-300 leading-relaxed">全世界40,000以上のルートに瞬時にアクセス。遅延のないリアルタイム連携を実現します。</p>
+                </div>
+            </div>
+
+            <!-- Square Card 1 (Speed/Zap) -->
+            <div class="glass glass-hover col-span-4 md:col-span-2 row-span-1 p-8 reveal">
+                <div class="flex justify-between items-start mb-6">
+                    <div class="p-3 bg-blue-500/10 rounded-2xl text-blue-500 border border-blue-500/20">
+                        <i data-lucide="zap" class="w-8 h-8"></i>
+                    </div>
+                    <span class="text-slate-500 text-xs font-mono bg-white/5 px-2 py-1 rounded">Ver. 2.4.0</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Ultra-Fast Booking</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">平均レスポンスタイム0.3秒。エージェントの作業効率を劇的に向上させます。</p>
+            </div>
+
+            <!-- Square Card 2 (Security) -->
+            <div class="glass glass-hover col-span-4 md:col-span-1 row-span-1 p-8 reveal">
+                <div class="p-3 bg-indigo-500/10 rounded-2xl text-indigo-500 mb-6 border border-indigo-500/20">
+                    <i data-lucide="shield-check" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-lg font-bold mb-2">Secure Shield</h3>
+                <p class="text-slate-400 text-xs leading-relaxed">英国規格の最高水準セキュリティプロトコルを標準搭載。</p>
+            </div>
+
+            <!-- Long Card (Quote) -->
+            <div class="glass glass-hover col-span-4 md:col-span-1 row-span-1 p-8 flex flex-col justify-between reveal">
+                <h3 class="text-lg font-bold mb-2 italic text-blue-400 leading-tight">"Efficiency is the soul of hospitality."</h3>
+                <div class="flex items-center space-x-3">
+                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200" class="w-10 h-10 rounded-full object-cover grayscale border border-white/10" alt="CEO">
+                    <div class="text-[10px]">
+                        <p class="font-bold">Marcus Sterling</p>
+                        <p class="text-slate-500 uppercase tracking-tighter">Founder, Axiom Flow</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wide Image Card (Integrations) -->
+            <div id="integrations" class="glass glass-hover col-span-4 md:col-span-4 row-span-1 overflow-hidden relative group reveal bg-slate-900 scroll-mt-24">
+                <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=1200" alt="Modern Office" class="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-1000">
+                <div class="img-overlay opacity-80" style="background: linear-gradient(to right, #030712 20%, transparent 100%);"></div>
+                <div class="relative z-10 p-8 flex flex-col md:flex-row items-center justify-between h-full">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-2">Human-Centric Dashboard</h3>
+                        <p class="text-slate-400 max-w-md text-sm leading-relaxed">直感的で美しいインターフェース。トレーニング不要で使いこなせる操作性を。</p>
+                    </div>
+                    <button class="mt-4 md:mt-0 px-8 py-3 bg-white text-black font-bold rounded-full hover:bg-blue-600 hover:text-white transition-all shadow-xl">
+                        ダッシュボードを見る
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24 container mx-auto px-6 scroll-mt-24">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold mb-4 reveal uppercase tracking-tight">Transparent Pricing</h2>
+            <p class="text-slate-400 reveal">ビジネスの成長段階に合わせて、最適なプランをお選びいただけます。</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Startup Plan -->
+            <div class="glass p-10 flex flex-col reveal">
+                <h3 class="text-xl font-bold mb-2">Startup</h3>
+                <p class="text-slate-400 text-sm mb-6">小規模エージェンシーや新規参入向け</p>
+                <div class="mb-8">
+                    <span class="text-4xl font-extrabold">£0</span>
+                    <span class="text-slate-500">/mo</span>
+                </div>
+                <ul class="space-y-4 mb-10 flex-grow text-sm">
+                    <li class="flex items-center text-slate-300">
+                        <i data-lucide="check" class="w-4 h-4 mr-3 text-blue-500"></i> APIアクセス (最大500リクエスト/日)
+                    </li>
+                    <li class="flex items-center text-slate-300">
+                        <i data-lucide="check" class="w-4 h-4 mr-3 text-blue-500"></i> 標準ダッシュボード
+                    </li>
+                    <li class="flex items-center text-slate-300">
+                        <i data-lucide="check" class="w-4 h-4 mr-3 text-blue-500"></i> 予約手数料: 2.5% / transaction
+                    </li>
+                    <li class="flex items-center text-slate-500 line-through">
+                        <i data-lucide="x" class="w-4 h-4 mr-3"></i> 24/7 優先電話サポート
+                    </li>
+                </ul>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdPQnWOBMU0gAfZk2a2IhTi4msSNKqtZEcHhgOPBuYrVJlEnw/viewform?usp=publish-editor" target="_blank" class="w-full py-4 rounded-xl border border-white/10 hover:bg-white/5 transition-all font-bold text-center block">
+                    無料で始める
+                </a>
+            </div>
+
+            <!-- Business Plan (Featured) -->
+            <div class="glass pricing-active p-10 flex flex-col relative reveal">
+                <div class="absolute top-0 right-10 -translate-y-1/2 bg-blue-600 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Most Popular</div>
+                <h3 class="text-xl font-bold mb-2">Business</h3>
+                <p class="text-slate-400 text-sm mb-6">成長中の中規模ツアーオペレーター向け</p>
+                <div class="mb-8">
+                    <span class="text-4xl font-extrabold">£499</span>
+                    <span class="text-slate-500">/mo</span>
+                </div>
+                <ul class="space-y-4 mb-10 flex-grow text-sm">
+                    <li class="flex items-center text-slate-300">
+                        <i data-lucide="check" class="w-4 h-4 mr-3 text-blue-500"></i> APIアクセス (無制限)
+                    </li>
+                    <li class="flex items-center text-slate-300">
+                        <i data-lucide="check" class="w-4 h-4 mr-3 text-blue-500"></i> 高度なアナリティクス
+                    </li>
+                    <li class="flex items-center text-slate-300">
+                        <i data-lucide="check" class="w-4 h-4 mr-3 text-blue-500"></i> 予約手数料: 1.0% / transaction
+                    </li>
+                    <li class="flex items-center text-slate-300">
+                        <i data-lucide="check" class="w-4 h-4 mr-3 text-blue-500"></i> メール優先サポート
+                    </li>
+                </ul>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdPQnWOBMU0gAfZk2a2IhTi4msSNKqtZEcHhgOPBuYrVJlEnw/viewform?usp=publish-editor" target="_blank" class="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-700 transition-all font-bold shadow-lg shadow-blue-600/20 text-center block">
+                    Businessプランを選択
+                </a>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="glass p-10 flex flex-col reveal">
+                <h3 class="text-xl font-bold mb-2">Enterprise</h3>
+                <p class="text-slate-400 text-sm mb-6">グローバル展開する大規模プラットフォーム向け</p>
+                <div class="mb-8">
+                    <span class="text-4xl font-extrabold italic">Custom</span>
+                </div>
+                <ul class="space-y-4 mb-10 flex-grow text-sm">
+                    <li class="flex items-center text-slate-300">
+                        <i data-lucide="check" class="w-4 h-4 mr-3 text-blue-500"></i> ホワイトラベル・ソリューション
+                    </li>
+                    <li class="flex items-center text-slate-300">
+                        <i data-lucide="check" class="w-4 h-4 mr-3 text-blue-500"></i> 予約手数料: ボリュームディスカウント
+                    </li>
+                    <li class="flex items-center text-slate-300">
+                        <i data-lucide="check" class="w-4 h-4 mr-3 text-blue-500"></i> 専任アカウントマネージャー
+                    </li>
+                    <li class="flex items-center text-slate-300">
+                        <i data-lucide="check" class="w-4 h-4 mr-3 text-blue-500"></i> 24/7 SLA保証
+                    </li>
+                </ul>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdPQnWOBMU0gAfZk2a2IhTi4msSNKqtZEcHhgOPBuYrVJlEnw/viewform?usp=publish-editor" target="_blank" class="w-full py-4 rounded-xl border border-white/10 hover:bg-white/5 transition-all font-bold text-center block">
+                    お問い合わせ
+                </a>
+            </div>
+        </div>
+
+        <p class="text-center mt-12 text-slate-500 text-xs">
+            ※ すべてのプランには、英国の税金（VAT）が別途適用される場合があります。<br>
+            詳細な技術ドキュメントについては、デモ予約後にお問い合わせください。
+        </p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-slate-800/50 container mx-auto px-6 text-center">
+        <div class="flex items-center justify-center space-x-2 mb-6">
+            <div class="w-6 h-6 bg-blue-600 rounded flex items-center justify-center font-bold italic text-xs">A</div>
+            <span class="text-lg font-bold tracking-tighter uppercase">Axiom Flow UK</span>
+        </div>
+        <p class="text-slate-500 text-sm">© 2025 Axiom Flow Ltd. London, United Kingdom.</p>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Smooth Scroll Logic with Offset
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    const navHeight = document.getElementById('main-nav').offsetHeight;
+                    const targetPosition = targetElement.offsetTop - (navHeight + 20); // Height of nav + extra padding
+
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Three.js Core Animation
+        let scene, camera, renderer, cube;
+        let mouseX = 0, mouseY = 0;
+
+        function initThree() {
+            const container = document.getElementById('canvas-container');
+            if (!container) return;
+            
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // Create Neon Cube (Wireframe)
+            const geometry = new THREE.BoxGeometry(2.2, 2.2, 2.2);
+            const material = new THREE.MeshBasicMaterial({ 
+                color: 0x3b82f6, 
+                wireframe: true,
+                transparent: true,
+                opacity: 0.6
+            });
+            cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
+
+            // Add inner solid cube
+            const innerGeom = new THREE.BoxGeometry(1.6, 1.6, 1.6);
+            const innerMat = new THREE.MeshBasicMaterial({ 
+                color: 0x1d4ed8, 
+                transparent: true, 
+                opacity: 0.25 
+            });
+            const innerCube = new THREE.Mesh(innerGeom, innerMat);
+            cube.add(innerCube);
+
+            camera.position.z = 5;
+
+            // Handle Mouse Move
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX - window.innerWidth / 2) / 100;
+                mouseY = (e.clientY - window.innerHeight / 2) / 100;
+            });
+
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (cube) {
+                // Base rotation
+                cube.rotation.x += 0.003;
+                cube.rotation.y += 0.003;
+
+                // Follow mouse subtly
+                cube.rotation.x += (mouseY * 0.1 - cube.rotation.x) * 0.05;
+                cube.rotation.y += (mouseX * 0.1 - cube.rotation.y) * 0.05;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            const container = document.getElementById('canvas-container');
+            if (!container) return;
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        // Scroll Reveal Animation
+        function reveal() {
+            const reveals = document.querySelectorAll(".reveal");
+            reveals.forEach(el => {
+                const windowHeight = window.innerHeight;
+                const elementTop = el.getBoundingClientRect().top;
+                const elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    el.classList.add("active");
+                }
+            });
+        }
+
+        window.addEventListener("scroll", reveal);
+        window.onload = () => {
+            initThree();
+            reveal(); 
+        };
+    </script>
+</body>
+</html>
